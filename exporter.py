@@ -67,7 +67,7 @@ def process_request(gaugename: Gauge, api_name: str, corona_data=None):
 if __name__ == "__main__":
 
     args = parse_arguments(sys.argv[1:])
-    for coll in list(REGISTRY._collector_to_names.keys()):  # pylint: disable=W0212
+    for coll in list(REGISTRY._collector_to_names.keys()):  # pylint: disable=W0212 # noqa: E501
         REGISTRY.unregister(coll)
     EWZ = Gauge(
         "EWZ_{}".format(args.gen).replace("-", "_"),
