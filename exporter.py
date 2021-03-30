@@ -67,22 +67,26 @@ def process_request(gaugename: Gauge, api_name: str, corona_data=None):
 if __name__ == "__main__":
 
     args = parse_arguments(sys.argv[1:])
-    for coll in list(REGISTRY._collector_to_names.keys()): # pylint: disable=W0212
+    for coll in list(REGISTRY._collector_to_names.keys()):  # pylint: disable=W0212
         REGISTRY.unregister(coll)
-    EWZ = Gauge("EWZ_{}".format(args.gen), "Einwohnerzahl {}".format(args.gen))
-    EWZ_BL = Gauge("EWZ_BL", "Einwohnerzahl Bundesland")
+    EWZ = Gauge(
+        "EWZ_{}".format(args.gen).replace("-", "_"),
+        "Einwohnerzahl {}".format(args.gen)
+    )
+    EWZ_BL = Gauge(
+        "EWZ_BL", "Einwohnerzahl Bundesland")
     cases = Gauge(
-        "Coronafaelle_{}".format(args.gen),
+        "Coronafaelle_{}".format(args.gen).replace("-", "_"),
         "Coronafälle in {}".format(args.gen)
     )
     death = Gauge(
-        "Todesfaelle_{}".format(args.gen),
+        "Todesfaelle_{}".format(args.gen).replace("-", "_"),
         "Todesfälle {}".format(args.gen)
     )
     cases7_per_100k = Gauge(
-        "Inzidenz_{}".format(args.gen),
+        "Inzidenz_{}".format(args.gen).replace("-", "_"),
         "Inzidenzwert auf 100.000 \
-        Einwohner Bautzen",
+        Einwohner {}".format(args.gen).replace("-", "_"),
     )
     cases7_bl_per_100k = Gauge(
         "Inzidenz_BL",
