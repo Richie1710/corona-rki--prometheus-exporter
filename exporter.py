@@ -3,12 +3,14 @@ Provides an exporter for corona data
 """
 
 import time
-import requests
-import argparse
 import sys
-
-
-from prometheus_client import Gauge, start_http_server, REGISTRY
+import argparse
+import requests
+from prometheus_client import (  # type: ignore
+    Gauge,
+    start_http_server,
+    REGISTRY,
+)
 
 
 def parse_arguments(arguments):
@@ -23,8 +25,7 @@ def parse_arguments(arguments):
     parser.add_argument(
         "gen", type=str, help="name of state", default="Bautzen"
     )
-    args = parser.parse_args(arguments)
-    return args
+    return parser.parse_args(arguments)
 
 
 def getcorona_information_from_rki(gen: str = "Bautzen") -> str:
@@ -36,12 +37,11 @@ def getcorona_information_from_rki(gen: str = "Bautzen") -> str:
     Returns:
         any: json data
     """
-    url = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/\
-rest/services/RKI_Landkreisdaten/FeatureServer/0/query?where=\
-GEN%20%3D%20'{}'&outFields=EWZ_BL,EWZ,cases_per_population,cases,\
-deaths,death_rate,cases7_per_100k,cases7_bl_per_100k,cases7_bl,\
-death7_bl,cases7_lk,death7_lk,cases7_per_100k_txt&\
-returnGeometry=false&outSR=4326&f=json".format(
+    url = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/\
+RKI_Landkreisdaten/FeatureServer/0/query?where=GEN%20%3D%20'{}'&\
+outFields=EWZ_BL,EWZ,cases_per_population,cases,deaths,death_rate,\
+cases7_per_100k,cases7_bl_per_100k,cases7_bl,death7_bl,cases7_lk,death7_lk,\
+cases7_per_100k_txt&returnGeometry=false&outSR=4326&f=json".format(
         gen
     )
     req = requests.get(url)
@@ -67,17 +67,20 @@ def process_request(gaugename: Gauge, api_name: str, corona_data=None):
 if __name__ == "__main__":
 
     args = parse_arguments(sys.argv[1:])
-    gen = args.gen
-    for coll in list(REGISTRY._collector_to_names.keys()):
+    for coll in list(REGISTRY._collector_to_names.keys()): # pylint: disable=W0212
         REGISTRY.unregister(coll)
-    EWZ = Gauge("EWZ_{}".format(gen), "Einwohnerzahl {}".format(gen))
+    EWZ = Gauge("EWZ_{}".format(args.gen), "Einwohnerzahl {}".format(args.gen))
     EWZ_BL = Gauge("EWZ_BL", "Einwohnerzahl Bundesland")
     cases = Gauge(
-        "Coronafaelle_{}".format(gen), "Coronafälle in {}".format(gen)
+        "Coronafaelle_{}".format(args.gen),
+        "Coronafälle in {}".format(args.gen)
     )
-    death = Gauge("Todesfaelle_{}".format(gen), "Todesfälle {}".format(gen))
+    death = Gauge(
+        "Todesfaelle_{}".format(args.gen),
+        "Todesfälle {}".format(args.gen)
+    )
     cases7_per_100k = Gauge(
-        "Inzidenz_{}".format(gen),
+        "Inzidenz_{}".format(args.gen),
         "Inzidenzwert auf 100.000 \
         Einwohner Bautzen",
     )
@@ -88,7 +91,7 @@ if __name__ == "__main__":
     )
     start_http_server(8000)
     while True:
-        corona_data = getcorona_information_from_rki(gen)
+        corona_json = getcorona_information_from_rki(args.gen)
         for gauge in (
             (EWZ, "EWZ"),
             (EWZ_BL, "EWZ_BL"),
@@ -97,5 +100,5 @@ if __name__ == "__main__":
             (cases7_per_100k, "cases7_per_100k"),
             (cases7_bl_per_100k, "cases7_bl_per_100k"),
         ):
-            process_request(gauge[0], gauge[1], corona_data)
+            process_request(gauge[0], gauge[1], corona_json)
         time.sleep(300)
