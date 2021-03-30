@@ -1,3 +1,7 @@
+"""
+Provides an exporter for corona data
+"""
+
 import time
 import requests
 import argparse
