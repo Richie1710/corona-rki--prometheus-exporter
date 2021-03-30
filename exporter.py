@@ -7,6 +7,7 @@ import requests
 import argparse
 import sys
 
+
 from prometheus_client import Gauge, start_http_server, REGISTRY
 
 
@@ -17,10 +18,11 @@ def parse_arguments(arguments):
         args (sys.argv): Arguments of script call
     """
     parser = argparse.ArgumentParser(
-        description="get corona \
-inzidenz from RKI"
+        description="get corona inzidenz from RKI"
     )
-    parser.add_argument("gen", type=str, help="name of state", default="Bautzen")
+    parser.add_argument(
+        "gen", type=str, help="name of state", default="Bautzen"
+    )
     args = parser.parse_args(arguments)
     return args
 
@@ -70,7 +72,9 @@ if __name__ == "__main__":
         REGISTRY.unregister(coll)
     EWZ = Gauge("EWZ_{}".format(gen), "Einwohnerzahl {}".format(gen))
     EWZ_BL = Gauge("EWZ_BL", "Einwohnerzahl Bundesland")
-    cases = Gauge("Coronafaelle_{}".format(gen), "Coronafälle in {}".format(gen))
+    cases = Gauge(
+        "Coronafaelle_{}".format(gen), "Coronafälle in {}".format(gen)
+    )
     death = Gauge("Todesfaelle_{}".format(gen), "Todesfälle {}".format(gen))
     cases7_per_100k = Gauge(
         "Inzidenz_{}".format(gen),
