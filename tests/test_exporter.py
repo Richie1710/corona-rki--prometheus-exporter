@@ -2,12 +2,21 @@
 from prometheus_client import Gauge
 import exporter
 
-GEN = "Bautzen"
-
 
 def test_getcorona_information_from_rki():
-    response = exporter.getcorona_information_from_rki(GEN)
-    assert(len(response['features']) > 0)
+    response_bautzen = exporter.getcorona_information_from_rki('Bautzen')
+    assert(len(response_bautzen['features']) > 0)
+    response_noneexisting = exporter.getcorona_information_from_rki('Not \
+        existing State')
+    assert(len(response_noneexisting['features']) == 0)
+    response_eichsfeld = exporter.getcorona_information_from_rki('Eichsfeld')
+    assert(len(response_eichsfeld['features']) > 0)
+    assert(response_eichsfeld['features'] != response_bautzen['features'])
+
+
+def test_argument_parseing():
+    args = exporter.parse_arguments(['TEST'])
+    assert args.gen == 'TEST'
 
 
 def test_process_request(mocker):
