@@ -1,11 +1,21 @@
 import time
 import requests
+import argparse
+import sys
 
 from prometheus_client import Gauge, start_http_server, REGISTRY
-GEN = "Bautzen"
 
 
-def getcorona_information_from_rki(gen: str) -> str:
+def parse_arguments(args):
+    parser = argparse.ArgumentParser(description="get corona \
+inzidenz from RKI")
+    parser.add_argument('gen', type=str, help="name of state",
+                        default='Bautzen')
+    args = parser.parse_args(args)
+    return args
+
+
+def getcorona_information_from_rki(gen: str = "Bautzen") -> str:
     """Get Corona Information from RKI and returns as json
 
     Args:
@@ -35,27 +45,33 @@ def process_request(gaugename: Gauge, api_name: str, corona_data=None):
         given it will fetch new. Defaults to None.
     """
     if not corona_data:
-        corona_data = getcorona_information_from_rki(GEN)
+        corona_data = getcorona_information_from_rki()
     featuredata = corona_data["features"][0]["attributes"]
     gaugename.set(featuredata[api_name])
 
 
 if __name__ == '__main__':
+
+    args = parse_arguments(sys.argv[1:])
+    gen = args.gen
     for coll in list(REGISTRY._collector_to_names.keys()):
         REGISTRY.unregister(coll)
-    EWZ = Gauge('EWZ_Bautzen', 'Einwohnerzahl Bautzen')
-    EWZ_BL = Gauge('EWZ_Sachsen', 'Einwohnerzahl Sachsen')
-    cases = Gauge('Coronafaelle_Bautzen', 'Coronafälle in Bautzen')
-    death = Gauge('Todesfaelle_Bautzen', 'Todesfälle Bautzen')
-    cases7_per_100k = Gauge('Inzidenz_bautzen', 'Inzidenzwert auf 100.000 \
+    EWZ = Gauge('EWZ_{}'.format(gen),
+                'Einwohnerzahl {}'.format(gen))
+    EWZ_BL = Gauge('EWZ_BL', 'Einwohnerzahl Bundesland')
+    cases = Gauge('Coronafaelle_{}'.format(gen),
+                  'Coronafälle in {}'.format(gen))
+    death = Gauge('Todesfaelle_{}'.format(gen),
+                  'Todesfälle {}'.format(gen))
+    cases7_per_100k = Gauge('Inzidenz_{}'.format(gen), 'Inzidenzwert auf 100.000 \
         Einwohner Bautzen')
-    cases7_bl_per_100k = Gauge('Inzidenz_Sachsen', 'Inzidenzwert auf 100.000 \
-        Einwohner Sachsen')
+    cases7_bl_per_100k = Gauge('Inzidenz_BL', 'Inzidenzwert auf 100.000 \
+        Einwohner BL')
     start_http_server(8000)
     while True:
-        corona_data = getcorona_information_from_rki(GEN)
+        corona_data = getcorona_information_from_rki(gen)
         for gauge in ((EWZ, "EWZ"), (EWZ_BL, "EWZ_BL"), (cases, "cases"),
-                      (death, "death"), (cases7_per_100k, "cases7_per_100k"),
+                      (death, "deaths"), (cases7_per_100k, "cases7_per_100k"),
                       (cases7_bl_per_100k, "cases7_bl_per_100k")):
             process_request(gauge[0], gauge[1], corona_data)
         time.sleep(300)
