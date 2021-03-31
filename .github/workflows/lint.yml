@@ -20,7 +20,7 @@ jobs:
           use-isort: false
           extra-pylint-options: ""
           extra-pycodestyle-options: ""
-          extra-flake8-options: "--max-line-length=88 --ignore=E203,W503"
-          extra-black-options: "--line-length 88"
+          extra-flake8-options: "--max-line-length=200 --ignore=E203,W503"
+          extra-black-options: "--line-length 200"
           extra-mypy-options: ""
           extra-isort-options: ""
