@@ -5,8 +5,8 @@ Provides an exporter for corona data
 import time
 import sys
 import argparse
-import requests
-from prometheus_client import (  # type: ignore
+import requests  # pylint: disable=E0401 disable because of not checking external libaries
+from prometheus_client import (  # type: ignore # pylint: disable=E0401 disable because of not checking external libaries
     Gauge,
     start_http_server,
     REGISTRY,
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     args = parse_arguments(sys.argv[1:])
     # No other way to remove python gc values from exporter
-    for coll in list(REGISTRY._collector_to_names.keys()):
+    for coll in list(REGISTRY._collector_to_names.keys()):  # pylint: disable=W0212
         REGISTRY.unregister(coll)
     EWZ = Gauge(
         "EWZ_{}".format(args.gen).replace("-", "_"), "Einwohnerzahl {}".format(args.gen)
