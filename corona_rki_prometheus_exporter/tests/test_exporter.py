@@ -1,5 +1,5 @@
 from prometheus_client import Gauge  # type: ignore
-import exporter  # type: ignore
+import exporter
 
 
 def test_getcorona_information_from_rki():
