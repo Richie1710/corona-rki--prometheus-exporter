@@ -19,12 +19,8 @@ def parse_arguments(arguments):
     Args:
         args (sys.argv): Arguments of script call
     """
-    parser = argparse.ArgumentParser(
-        description="get corona inzidenz from RKI"
-    )
-    parser.add_argument(
-        "gen", type=str, help="name of state", default="Bautzen"
-    )
+    parser = argparse.ArgumentParser(description="get corona inzidenz from RKI")
+    parser.add_argument("gen", type=str, help="name of state", default="Bautzen")
     return parser.parse_args(arguments)
 
 
@@ -67,26 +63,29 @@ def process_request(gaugename: Gauge, api_name: str, corona_data=None):
 if __name__ == "__main__":
 
     args = parse_arguments(sys.argv[1:])
-    for coll in list(REGISTRY._collector_to_names.keys()):  # pylint: disable=W0212 # noqa: E501
+    # No other way to remove python gc values from exporter
+    for coll in list(REGISTRY._collector_to_names.keys()):
         REGISTRY.unregister(coll)
     EWZ = Gauge(
-        "EWZ_{}".format(args.gen).replace("-", "_"),
-        "Einwohnerzahl {}".format(args.gen)
+        "EWZ_{}".format(args.gen).replace("-", "_"), "Einwohnerzahl {}".format(args.gen)
     )
-    EWZ_BL = Gauge(
-        "EWZ_BL", "Einwohnerzahl Bundesland")
+    EWZ_BL = Gauge("EWZ_BL", "Einwohnerzahl Bundesland")
     cases = Gauge(
         "Coronafaelle_{}".format(args.gen).replace("-", "_"),
-        "Coronafälle in {}".format(args.gen)
+        "Coronafälle in {}".format(args.gen),
     )
     death = Gauge(
         "Todesfaelle_{}".format(args.gen).replace("-", "_"),
-        "Todesfälle {}".format(args.gen)
+        "Todesfälle {}".format(args.gen),
     )
     cases7_per_100k = Gauge(
         "Inzidenz_{}".format(args.gen).replace("-", "_"),
         "Inzidenzwert auf 100.000 \
-        Einwohner {}".format(args.gen).replace("-", "_"),
+        Einwohner {}".format(
+            args.gen
+        ).replace(
+            "-", "_"
+        ),
     )
     cases7_bl_per_100k = Gauge(
         "Inzidenz_BL",
