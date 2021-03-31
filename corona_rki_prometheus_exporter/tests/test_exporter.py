@@ -2,6 +2,7 @@
 This file keeps tests for corona_rki_prometheus_exporter
 """
 import sys
+
 sys.path.append("corona_rki_prometheus_exporter")
 import exporter  # noqa: E402 # pylint: disable=C0413
 from prometheus_client import Gauge  # type: ignore # pylint: disable=C0413,E0401  # noqa:402
@@ -49,21 +50,7 @@ def test_process_request(mocker):
         Einwohner Sachsen",
     )
     mocker.patch(
-        "exporter.getcorona_information_from_rki",
-        return_value={
-            "features": [
-                {
-                    "attributes": {
-                        "EWZ_BL": 1,
-                        "EWZ": 2,
-                        "cases": 3,
-                        "death": 4,
-                        "cases7_per_100k": 5,
-                        "cases7_bl_per_100k": 6,
-                    }
-                }
-            ]
-        },
+        "exporter.getcorona_information_from_rki", return_value={"features": [{"attributes": {"EWZ_BL": 1, "EWZ": 2, "cases": 3, "death": 4, "cases7_per_100k": 5, "cases7_bl_per_100k": 6}}]},
     )
 
     for gauge in (

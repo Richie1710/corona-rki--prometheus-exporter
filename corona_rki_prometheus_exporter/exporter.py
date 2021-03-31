@@ -66,18 +66,10 @@ if __name__ == "__main__":
     # No other way to remove python gc values from exporter
     for coll in list(REGISTRY._collector_to_names.keys()):  # pylint: disable=W0212
         REGISTRY.unregister(coll)
-    EWZ = Gauge(
-        "EWZ_{}".format(args.gen).replace("-", "_"), "Einwohnerzahl {}".format(args.gen)
-    )
+    EWZ = Gauge("EWZ_{}".format(args.gen).replace("-", "_"), "Einwohnerzahl {}".format(args.gen))
     EWZ_BL = Gauge("EWZ_BL", "Einwohnerzahl Bundesland")
-    cases = Gauge(
-        "Coronafaelle_{}".format(args.gen).replace("-", "_"),
-        "Coronafälle in {}".format(args.gen),
-    )
-    death = Gauge(
-        "Todesfaelle_{}".format(args.gen).replace("-", "_"),
-        "Todesfälle {}".format(args.gen),
-    )
+    cases = Gauge("Coronafaelle_{}".format(args.gen).replace("-", "_"), "Coronafälle in {}".format(args.gen),)
+    death = Gauge("Todesfaelle_{}".format(args.gen).replace("-", "_"), "Todesfälle {}".format(args.gen),)
     cases7_per_100k = Gauge(
         "Inzidenz_{}".format(args.gen).replace("-", "_"),
         "Inzidenzwert auf 100.000 \
