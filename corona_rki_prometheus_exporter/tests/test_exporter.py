@@ -1,6 +1,7 @@
 import sys
 from prometheus_client import Gauge  # type: ignore
 sys.path.append("../corona_rki_prometheus_exporter")
+sys.path.append("corona_rki_prometheus_exporter")
 import exporter  # noqa: E402
 
 
@@ -39,7 +40,7 @@ def test_process_request(mocker):
         Einwohner Sachsen",
     )
     mocker.patch(
-        "corona_rki_prometheus_exporter.getcorona_information_from_rki",
+        "exporter.getcorona_information_from_rki",
         return_value={
             "features": [
                 {
