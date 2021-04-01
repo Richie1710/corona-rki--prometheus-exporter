@@ -1,9 +1,8 @@
 """
 This file keeps tests for corona_rki_prometheus_exporter
 """
-import sys
 
-sys.path.append("corona_rki_prometheus_exporter")
+
 import exporter  # noqa: E402 # pylint: disable=C0413
 from prometheus_client import Gauge  # type: ignore # pylint: disable=C0413,E0401  # noqa:402
 
